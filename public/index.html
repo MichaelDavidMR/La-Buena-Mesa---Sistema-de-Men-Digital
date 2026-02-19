@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Buena Mesa - Menú Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .slide-in { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .qr-scanner-overlay {
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, transparent 20%, transparent 80%, rgba(0, 0, 0, 0.8) 100%);
+        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased overflow-x-hidden">
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <!-- QR Scanner Modal -->
+    <div id="qr-modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center">
+        <div class="relative w-full max-w-lg mx-4">
+            <div class="bg-white rounded-2xl overflow-hidden">
+                <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
+                    <h3 class="font-bold text-lg">Escanear Código QR</h3>
+                    <button onclick="closeQRScanner()" class="p-2 hover:bg-slate-800 rounded-lg">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="relative aspect-square bg-black">
+                    <video id="qr-video" class="w-full h-full object-cover" autoplay playsinline></video>
+                    <canvas id="qr-canvas" class="hidden"></canvas>
+                    <div class="absolute inset-0 qr-scanner-overlay flex items-center justify-center">
+                        <div class="w-48 h-48 border-2 border-white/50 rounded-lg relative">
+                            <div class="absolute top-0 left-0 w-4 h-4 border-t-4 border-l-4 border-blue-500 -mt-1 -ml-1"></div>
+                            <div class="absolute top-0 right-0 w-4 h-4 border-t-4 border-r-4 border-blue-500 -mt-1 -mr-1"></div>
+                            <div class="absolute bottom-0 left-0 w-4 h-4 border-b-4 border-l-4 border-blue-500 -mb-1 -ml-1"></div>
+                            <div class="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-blue-500 -mb-1 -mr-1"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-gray-50 text-center">
+                    <p class="text-sm text-gray-600 mb-2">Centra el código QR en el recuadro</p>
+                    <button onclick="closeQRScanner()" class="text-gray-500 hover:text-gray-700 text-sm">Cancelar escaneo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Code Input Modal -->
+    <div id="table-input-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all scale-100">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-keyboard text-2xl text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900">Ingresar Código de Mesa</h3>
+                <p class="text-gray-500 text-sm mt-2">Introduce el código alfanumérico de tu mesa</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <input type="text" id="manual-table-code" placeholder="Ej: A12B3" class="w-full px-4 py-3 text-center text-2xl font-mono tracking-widest uppercase border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors" maxlength="6">
+                    <p class="text-xs text-gray-500 mt-2 text-center">Código de 5-6 caracteres</p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="closeTableInputModal()" class="flex-1 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Cancelar</button>
+                    <button onclick="validateManualTableCode()" class="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">Verificar</button>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-gray-200 text-center">
+                <button onclick="switchToQRScanner()" class="text-blue-600 text-sm hover:underline flex items-center justify-center gap-2 w-full">
+                    <i class="fas fa-qrcode"></i>Prefiero escanear QR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Public Interface -->
+    <div id="public-interface" class="min-h-screen pb-20">
+        <!-- Header -->
+        <header class="bg-white shadow-sm sticky top-0 z-30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-utensils text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">La Buena Mesa</h1>
+                            <p class="text-xs text-gray-500">Menú Digital</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <div id="table-status" class="hidden items-center gap-2 px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="table-code-display">Mesa --</span>
+                            <button onclick="clearTable()" class="ml-1 text-green-700 hover:text-green-900"><i class="fas fa-times"></i></button>
+                        </div>
+
+                        <button onclick="toggleCart()" class="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <i class="fas fa-shopping-bag text-xl text-gray-700"></i>
+                            <span id="cart-count" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center hidden">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero -->
+        <div id="hero-section" class="bg-gradient-to-br from-orange-500 to-red-600 text-white py-12 px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Bienvenido a La Buena Mesa</h2>
+                <p class="text-orange-100 mb-8 text-lg">Escanea el código QR de tu mesa o ingresa el código manualmente</p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="openQRScanner()" class="px-8 py-4 bg-white text-orange-600 rounded-xl font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-qrcode text-xl"></i>Escanear QR
+                    </button>
+                    <button onclick="openTableInputModal()" class="px-8 py-4 bg-orange-700 text-white rounded-xl font-bold shadow-lg hover:bg-orange-800 transition-all flex items-center justify-center gap-2 border-2 border-orange-400">
+                        <i class="fas fa-keyboard text-xl"></i>Ingresar Código
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Content -->
+        <div id="menu-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex gap-2 overflow-x-auto pb-4 mb-6" id="category-filters">
+                <button onclick="filterCategory('all')" class="category-btn active px-4 py-2 bg-orange-500 text-white rounded-full whitespace-nowrap text-sm font-medium" data-category="all">Todos</button>
+            </div>
+
+            <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="max-w-4xl mx-auto px-4 py-12 text-center">
+            <div class="bg-white rounded-2xl shadow-sm p-8 border-2 border-dashed border-gray-300">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-chair text-3xl text-gray-400"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Selecciona tu mesa</h3>
+                <p class="text-gray-500 mb-6">Para ver el menú y realizar pedidos, primero debes identificar tu mesa.</p>
+                <div class="flex gap-4 justify-center">
+                    <button onclick="openQRScanner()" class="text-orange-600 font-medium hover:underline">Escanear QR</button>
+                    <span class="text-gray-300">|</span>
+                    <button onclick="openTableInputModal()" class="text-orange-600 font-medium hover:underline">Ingresar código</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-40 flex flex-col">
+        <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <h3 class="text-xl font-bold text-gray-900">Tu Pedido</h3>
+            <button onclick="toggleCart()" class="p-2 hover:bg-gray-200 rounded-full"><i class="fas fa-times text-xl"></i></button>
+        </div>
+
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+
+        <div class="p-6 border-t border-gray-200 bg-gray-50">
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between text-sm text-gray-600">
+                    <span>Subtotal</span><span id="cart-subtotal">$0.00</span>
+                </div>
+                <div class="flex justify-between text-sm text-gray-600">
+                    <span>Impuestos (10%)</span><span id="cart-tax">$0.00</span>
+                </div>
+                <div class="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t border-gray-200">
+                    <span>Total</span><span id="cart-total">$0.00</span>
+                </div>
+            </div>
+
+            <div class="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div class="flex items-center gap-2 text-sm text-blue-800">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Mesa: <strong id="cart-table-code">--</strong></span>
+                </div>
+            </div>
+
+            <button onclick="checkout()" id="checkout-btn" class="w-full py-3 bg-orange-500 text-white rounded-xl font-bold hover:bg-orange-600 transition-colors disabled:opacity-50" disabled>
+                Realizar Pedido
+            </button>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" id="product-modal-content"></div>
+    </div>
+
+    <script>
+        // ==================== CONFIG ====================
+        const API_URL = '';
+        const socket = io();
+
+        // ==================== STATE ====================
+        const AppState = {
+            currentTable: null,
+            cart: [],
+            categories: [],
+            products: [],
+            tables: []
+        };
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            setupSocketListeners();
+            checkExistingTable();
+        });
+
+        function setupSocketListeners() {
+            socket.on('connect', () => {
+                if (AppState.currentTable) {
+                    socket.emit('join:table', AppState.currentTable.code);
+                }
+            });
+
+            socket.on('order:confirmed', (data) => {
+                showToast(`Pedido #${data.orderId} confirmado`);
+            });
+
+            socket.on('order:status', (data) => {
+                showToast(`Tu pedido está: ${translateStatus(data.status)}`, 'info');
+            });
+
+            socket.on('product:updated', (product) => {
+                const idx = AppState.products.findIndex(p => p.id === product.id);
+                if (idx !== -1) AppState.products[idx] = product;
+                renderPublicMenu();
+            });
+
+            socket.on('product:deleted', ({ id }) => {
+                AppState.products = AppState.products.filter(p => p.id !== id);
+                renderPublicMenu();
+            });
+        }
+
+        // ==================== API ====================
+        async function api(endpoint, options = {}) {
+            const res = await fetch(`${API_URL}/api${endpoint}`, {
+                headers: { 'Content-Type': 'application/json' },
+                ...options,
+                body: options.body ? JSON.stringify(options.body) : undefined
+            });
+            if (!res.ok) throw new Error(await res.text());
+            return res.json();
+        }
+
+        async function loadData() {
+            try {
+                const data = await api('/data');
+                AppState.products = data.products;
+                AppState.categories = data.categories;
+                AppState.tables = data.tables;
+                renderPublicMenu();
+            } catch (err) {
+                showToast('Error cargando datos', 'error');
+            }
+        }
+
+        // ==================== PUBLIC INTERFACE ====================
+        function renderPublicMenu() {
+            const catContainer = document.getElementById('category-filters');
+            catContainer.innerHTML = `
+                <button onclick="filterCategory('all')" class="category-btn active px-4 py-2 bg-orange-500 text-white rounded-full whitespace-nowrap text-sm font-medium" data-category="all">Todos</button>
+                ${AppState.categories.map(c => `
+                    <button onclick="filterCategory(${c.id})" class="category-btn px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-full whitespace-nowrap text-sm font-medium hover:bg-gray-50" data-category="${c.id}">${c.name}</button>
+                `).join('')}
+            `;
+            renderProductsGrid('all');
+        }
+
+        function renderProductsGrid(catId) {
+            const grid = document.getElementById('products-grid');
+            let prods = AppState.products.filter(p => p.available);
+            if (catId !== 'all') prods = prods.filter(p => p.category_id === parseInt(catId));
+            
+            grid.innerHTML = prods.map(p => `
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer" onclick="openProductDetail(${p.id})">
+                    <div class="aspect-video bg-gray-200 relative">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">
+                        <div class="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-lg font-bold text-gray-900">$${p.price.toFixed(2)}</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-900 mb-1">${p.name}</h3>
+                        <p class="text-sm text-gray-500 line-clamp-2">${p.description}</p>
+                        <button class="mt-3 w-full py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600 transition-colors">Agregar</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(catId) {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                const isActive = btn.dataset.category == catId || (catId === 'all' && btn.dataset.category === 'all');
+                btn.className = isActive 
+                    ? 'category-btn active px-4 py-2 bg-orange-500 text-white rounded-full whitespace-nowrap text-sm font-medium'
+                    : 'category-btn px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-full whitespace-nowrap text-sm font-medium hover:bg-gray-50';
+            });
+            renderProductsGrid(catId);
+        }
+
+        // ==================== TABLE MANAGEMENT ====================
+        function checkExistingTable() {
+            const saved = localStorage.getItem('currentTable');
+            if (saved) {
+                const table = JSON.parse(saved);
+                if (!table.expiresAt || new Date(table.expiresAt) > new Date()) {
+                    setCurrentTable(table);
+                } else {
+                    localStorage.removeItem('currentTable');
+                }
+            }
+        }
+
+        function setCurrentTable(table) {
+            AppState.currentTable = table;
+            localStorage.setItem('currentTable', JSON.stringify(table));
+            socket.emit('join:table', table.code);
+            
+            document.getElementById('hero-section').classList.add('hidden');
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('menu-content').classList.remove('hidden');
+            
+            const badge = document.getElementById('table-status');
+            badge.classList.remove('hidden');
+            badge.classList.add('flex');
+            document.getElementById('table-code-display').textContent = `Mesa ${table.code}`;
+            document.getElementById('cart-table-code').textContent = table.code;
+            
+            showToast(`Mesa ${table.code} seleccionada`);
+        }
+
+        function clearTable() {
+            AppState.currentTable = null;
+            localStorage.removeItem('currentTable');
+            document.getElementById('hero-section').classList.remove('hidden');
+            document.getElementById('empty-state').classList.remove('hidden');
+            document.getElementById('menu-content').classList.add('hidden');
+            document.getElementById('table-status').classList.add('hidden');
+            document.getElementById('table-status').classList.remove('flex');
+            showToast('Mesa desvinculada');
+        }
+
+        // ==================== QR SCANNER ====================
+        let qrStream = null;
+
+        function openQRScanner() {
+            document.getElementById('qr-modal').classList.remove('hidden');
+            startQRScanner();
+        }
+
+        function closeQRScanner() {
+            document.getElementById('qr-modal').classList.add('hidden');
+            stopQRScanner();
+        }
+
+        async function startQRScanner() {
+            const video = document.getElementById('qr-video');
+            const canvas = document.getElementById('qr-canvas');
+            const ctx = canvas.getContext('2d');
+
+            try {
+                qrStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                video.srcObject = qrStream;
+
+                video.addEventListener('play', () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    scanFrame(video, canvas, ctx);
+                });
+            } catch (err) {
+                showToast('Error cámara: ' + err.message, 'error');
+            }
+        }
+
+        function stopQRScanner() {
+            if (qrStream) {
+                qrStream.getTracks().forEach(t => t.stop());
+                qrStream = null;
+            }
+        }
+
+        async function scanFrame(video, canvas, ctx) {
+            if (video.paused || video.ended) return;
+            
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+            if (code) {
+                try {
+                    const result = await api('/validate-qr', { method: 'POST', body: { payload: code.data } });
+                    if (result.valid) {
+                        closeQRScanner();
+                        setCurrentTable(result.table);
+                        return;
+                    }
+                } catch (err) {
+                    showToast(err.message, 'error');
+                }
+            }
+            requestAnimationFrame(() => scanFrame(video, canvas, ctx));
+        }
+
+        // ==================== MANUAL INPUT ====================
+        function openTableInputModal() {
+            document.getElementById('table-input-modal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('manual-table-code').focus(), 100);
+        }
+
+        function closeTableInputModal() {
+            document.getElementById('table-input-modal').classList.add('hidden');
+            document.getElementById('manual-table-code').value = '';
+        }
+
+        function switchToQRScanner() {
+            closeTableInputModal();
+            openQRScanner();
+        }
+
+        async function validateManualTableCode() {
+            const code = document.getElementById('manual-table-code').value.trim().toUpperCase();
+            if (!code || code.length < 4) {
+                showToast('Código inválido', 'error');
+                return;
+            }
+
+            const table = AppState.tables.find(t => t.code === code);
+            if (!table) {
+                showToast('Mesa no encontrada', 'error');
+                return;
+            }
+            if (table.status !== 'active') {
+                showToast('Mesa inactiva', 'error');
+                return;
+            }
+            if (table.expiresAt && new Date(table.expiresAt) < new Date()) {
+                showToast('Código expirado', 'error');
+                return;
+            }
+
+            closeTableInputModal();
+            setCurrentTable(table);
+        }
+
+        // ==================== CART ====================
+        function toggleCart() {
+            const sidebar = document.getElementById('cart-sidebar');
+            const isOpen = !sidebar.classList.contains('translate-x-full');
+            if (isOpen) {
+                sidebar.classList.add('translate-x-full');
+            } else {
+                sidebar.classList.remove('translate-x-full');
+                renderCart();
+            }
+        }
+
+        function openProductDetail(productId) {
+            if (!AppState.currentTable) {
+                showToast('Primero selecciona una mesa', 'error');
+                openTableInputModal();
+                return;
+            }
+
+            const p = AppState.products.find(x => x.id === productId);
+            const modal = document.getElementById('product-modal');
+            const content = document.getElementById('product-modal-content');
+            
+            content.innerHTML = `
+                <div class="relative">
+                    <div class="aspect-video bg-gray-200">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">
+                        <button onclick="closeProductDetail()" class="absolute top-4 right-4 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-lg"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-2xl font-bold text-gray-900">${p.name}</h3>
+                            <span class="text-2xl font-bold text-orange-600">$${p.price.toFixed(2)}</span>
+                        </div>
+                        <p class="text-gray-600 mb-6">${p.description}</p>
+                        
+                        ${p.options?.length > 0 ? `
+                            <div class="mb-6">
+                                <h4 class="font-medium text-gray-900 mb-3">Modificadores</h4>
+                                <div class="space-y-2">
+                                    ${p.options.map((opt, idx) => `
+                                        <label class="flex items-center justify-between p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                                            <div class="flex items-center gap-3">
+                                                <input type="checkbox" class="option-checkbox w-4 h-4 text-orange-500 rounded" data-name="${opt.name}" data-price="${opt.price}">
+                                                <span>${opt.name}</span>
+                                            </div>
+                                            <span class="text-gray-600">+$${opt.price.toFixed(2)}</span>
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="flex items-center border border-gray-300 rounded-lg">
+                                <button onclick="adjustModalQty(-1)" class="px-3 py-2 hover:bg-gray-100">-</button>
+                                <span id="modal-qty" class="px-3 py-2 font-medium">1</span>
+                                <button onclick="adjustModalQty(1)" class="px-3 py-2 hover:bg-gray-100">+</button>
+                            </div>
+                            <button onclick="addToCart(${productId})" class="flex-1 py-3 bg-orange-500 text-white rounded-xl font-bold hover:bg-orange-600">Agregar al pedido</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            window.modalQuantity = 1;
+            modal.classList.remove('hidden');
+        }
+
+        function closeProductDetail() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        function adjustModalQty(delta) {
+            window.modalQuantity = Math.max(1, (window.modalQuantity || 1) + delta);
+            document.getElementById('modal-qty').textContent = window.modalQuantity;
+        }
+
+        function addToCart(productId) {
+            const p = AppState.products.find(x => x.id === productId);
+            const options = [];
+            document.querySelectorAll('.option-checkbox:checked').forEach(cb => {
+                options.push({ name: cb.dataset.name, price: parseFloat(cb.dataset.price) });
+            });
+
+            const item = {
+                id: Date.now(),
+                product_id: productId,
+                product_name: p.name,
+                base_price: p.price,
+                options,
+                quantity: window.modalQuantity || 1,
+                price: p.price + options.reduce((s, o) => s + o.price, 0)
+            };
+
+            AppState.cart.push(item);
+            updateCartCount();
+            closeProductDetail();
+            showToast('Agregado al carrito');
+            window.modalQuantity = 1;
+        }
+
+        function updateCartCount() {
+            const count = AppState.cart.reduce((s, i) => s + i.quantity, 0);
+            const badge = document.getElementById('cart-count');
+            badge.textContent = count;
+            badge.classList.toggle('hidden', count === 0);
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            if (AppState.cart.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-gray-500"><i class="fas fa-shopping-bag text-4xl mb-3 opacity-30"></i><p>Tu carrito está vacío</p></div>';
+                document.getElementById('checkout-btn').disabled = true;
+            } else {
+                container.innerHTML = AppState.cart.map(item => `
+                    <div class="flex gap-4 bg-gray-50 p-3 rounded-lg">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-900">${item.product_name}</h4>
+                            ${item.options.length > 0 ? `<p class="text-xs text-gray-500 mt-1">${item.options.map(o => o.name).join(', ')}</p>` : ''}
+                            <div class="flex items-center gap-2 mt-2">
+                                <button onclick="updateCartItem(${item.id}, -1)" class="w-6 h-6 bg-white rounded border border-gray-300 flex items-center justify-center text-sm hover:bg-gray-100">-</button>
+                                <span class="text-sm font-medium">${item.quantity}</span>
+                                <button onclick="updateCartItem(${item.id}, 1)" class="w-6 h-6 bg-white rounded border border-gray-300 flex items-center justify-center text-sm hover:bg-gray-100">+</button>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold">$${(item.price * item.quantity).toFixed(2)}</p>
+                            <button onclick="removeFromCart(${item.id})" class="text-red-500 text-xs mt-1 hover:underline">Eliminar</button>
+                        </div>
+                    </div>
+                `).join('');
+                document.getElementById('checkout-btn').disabled = false;
+            }
+            updateCartTotals();
+        }
+
+        function updateCartItem(itemId, delta) {
+            const item = AppState.cart.find(i => i.id === itemId);
+            if (!item) return;
+            item.quantity += delta;
+            if (item.quantity <= 0) removeFromCart(itemId);
+            else {
+                renderCart();
+                updateCartCount();
+            }
+        }
+
+        function removeFromCart(itemId) {
+            AppState.cart = AppState.cart.filter(i => i.id !== itemId);
+            renderCart();
+            updateCartCount();
+        }
+
+        function updateCartTotals() {
+            const subtotal = AppState.cart.reduce((s, i) => s + i.price * i.quantity, 0);
+            const tax = subtotal * 0.10;
+            document.getElementById('cart-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('cart-tax').textContent = `$${tax.toFixed(2)}`;
+            document.getElementById('cart-total').textContent = `$${(subtotal + tax).toFixed(2)}`;
+        }
+
+        async function checkout() {
+            if (!AppState.currentTable || AppState.cart.length === 0) return;
+
+            const orderData = {
+                table_code: AppState.currentTable.code,
+                items: AppState.cart,
+                subtotal: parseFloat(document.getElementById('cart-subtotal').textContent.replace('$', '')),
+                tax: parseFloat(document.getElementById('cart-tax').textContent.replace('$', '')),
+                total: parseFloat(document.getElementById('cart-total').textContent.replace('$', '')),
+                client_meta: { userAgent: navigator.userAgent, timestamp: new Date().toISOString() }
+            };
+
+            try {
+                const order = await api('/orders', { method: 'POST', body: orderData });
+                AppState.cart = [];
+                updateCartCount();
+                toggleCart();
+                showToast(`¡Pedido #${order.id} realizado!`);
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function translateStatus(s) {
+            return { pending: 'Pendiente', preparing: 'En preparación', ready: 'Listo para servir', delivered: 'Entregado' }[s] || s;
+        }
+
+        // ==================== UTILS ====================
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = { success: 'bg-green-500', error: 'bg-red-500', warning: 'bg-yellow-500', info: 'bg-blue-500' };
+            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+            
+            toast.className = `${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-x-full`;
+            toast.innerHTML = `<i class="fas ${icons[type]}"></i><span class="font-medium">${msg}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        window.onclick = (e) => {
+            if (e.target.id === 'product-modal') closeProductDetail();
+        };
+    </script>
+</body>
+</html>

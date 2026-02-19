@@ -1,0 +1,1111 @@
+{
+  "products": [
+    {
+      "id": 1771458549475,
+      "name": "ROMO",
+      "description": "EXTRA VIEJO BRUGAL",
+      "price": 2000,
+      "category_id": 3,
+      "image": "https://i1.sndcdn.com/artworks-000444233403-4lzj58-t500x500.jpg",
+      "options": [],
+      "available": true
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Entradas",
+      "icon": "fa-utensils",
+      "color": "bg-yellow-500"
+    },
+    {
+      "id": 2,
+      "name": "Platos Principales",
+      "icon": "fa-drumstick-bite",
+      "color": "bg-red-500"
+    },
+    {
+      "id": 3,
+      "name": "Bebidas",
+      "icon": "fa-glass-martini",
+      "color": "bg-blue-500"
+    },
+    {
+      "id": 4,
+      "name": "Postres",
+      "icon": "fa-ice-cream",
+      "color": "bg-pink-500"
+    }
+  ],
+  "tables": [
+    {
+      "id": 1771458092724,
+      "code": "B2G9X",
+      "status": "active",
+      "note": "",
+      "createdAt": "2026-02-18T23:41:32.724Z",
+      "expiresAt": "2026-02-19T23:41:32.724Z",
+      "qrPath": "/qrcodes/table-B2G9X.png",
+      "qrPayload": "eyJ0YWJsZV9jb2RlIjoiQjJHOVgiLCJ0YWJsZV9pZCI6MTc3MTQ1ODA5MjcyNCwiaXNzdWVkX2F0IjoiMjAyNi0wMi0xOFQyMzo0MTozMi43MjRaIiwiZXhwaXJlc19hdCI6IjIwMjYtMDItMTlUMjM6NDE6MzIuNzI0WiIsIm5vbmNlIjoiMzdlMDIxNGVhY2I4YzBjZSIsInZlcnNpb24iOiIxLjAiLCJzaWciOiJ6VDJ4d1paZHZIYzNnS1lEIn0="
+    },
+    {
+      "id": 1771458943695,
+      "code": "9ECHL",
+      "status": "active",
+      "createdAt": "2026-02-18T23:55:43.695Z",
+      "expiresAt": null,
+      "qrPath": "/qrcodes/table-9ECHL.png",
+      "qrPayload": "eyJ0YWJsZV9jb2RlIjoiOUVDSEwiLCJ0YWJsZV9pZCI6MTc3MTQ1ODk0MzY5NSwiaXNzdWVkX2F0IjoiMjAyNi0wMi0xOFQyMzo1NTo0My42OTZaIiwiZXhwaXJlc19hdCI6IjIwMjctMDItMThUMjM6NTU6NDMuNjk2WiIsIm5vbmNlIjoiZWRjMDk4ODY4ZmUwMTE0ZSIsInZlcnNpb24iOiIxLjAiLCJzaWciOiJuZk5YRStKeCtDZzNPZmMrIn0="
+    },
+    {
+      "id": 1771458943774,
+      "code": "KC5VM",
+      "status": "active",
+      "createdAt": "2026-02-18T23:55:43.774Z",
+      "expiresAt": null,
+      "qrPath": "/qrcodes/table-KC5VM.png",
+      "qrPayload": "eyJ0YWJsZV9jb2RlIjoiS0M1Vk0iLCJ0YWJsZV9pZCI6MTc3MTQ1ODk0Mzc3NCwiaXNzdWVkX2F0IjoiMjAyNi0wMi0xOFQyMzo1NTo0My43NzRaIiwiZXhwaXJlc19hdCI6IjIwMjctMDItMThUMjM6NTU6NDMuNzc0WiIsIm5vbmNlIjoiZTNmNWI2OGY1MDYwN2Q2ZSIsInZlcnNpb24iOiIxLjAiLCJzaWciOiJIeVZHeVdXbkpLdUNhSkQxIn0="
+    },
+    {
+      "id": 1771458943815,
+      "code": "WJZXP",
+      "status": "active",
+      "createdAt": "2026-02-18T23:55:43.815Z",
+      "expiresAt": null,
+      "qrPath": "/qrcodes/table-WJZXP.png",
+      "qrPayload": "eyJ0YWJsZV9jb2RlIjoiV0paWFAiLCJ0YWJsZV9pZCI6MTc3MTQ1ODk0MzgxNSwiaXNzdWVkX2F0IjoiMjAyNi0wMi0xOFQyMzo1NTo0My44MTVaIiwiZXhwaXJlc19hdCI6IjIwMjctMDItMThUMjM6NTU6NDMuODE1WiIsIm5vbmNlIjoiM2Q3MDA4MjgzZjkwM2Y5NSIsInZlcnNpb24iOiIxLjAiLCJzaWciOiIvQ1VPbnJSSWJOUFk5S21ZIn0="
+    },
+    {
+      "id": 1771458943854,
+      "code": "6C8QR",
+      "status": "active",
+      "createdAt": "2026-02-18T23:55:43.854Z",
+      "expiresAt": null,
+      "qrPath": "/qrcodes/table-6C8QR.png",
+      "qrPayload": "eyJ0YWJsZV9jb2RlIjoiNkM4UVIiLCJ0YWJsZV9pZCI6MTc3MTQ1ODk0Mzg1NCwiaXNzdWVkX2F0IjoiMjAyNi0wMi0xOFQyMzo1NTo0My44NTRaIiwiZXhwaXJlc19hdCI6IjIwMjctMDItMThUMjM6NTU6NDMuODU0WiIsIm5vbmNlIjoiZWRkMzAzMWIwNzQ3ODJmMiIsInZlcnNpb24iOiIxLjAiLCJzaWciOiIzQ1loMmFPMzZOdGFDQVN6In0="
+    },
+    {
+      "id": 1771458943889,
+      "code": "DCK3J",
+      "status": "inactive",
+      "createdAt": "2026-02-18T23:55:43.889Z",
+      "expiresAt": null,
+      "qrPath": "/qrcodes/table-DCK3J.png",
+      "qrPayload": "eyJ0YWJsZV9jb2RlIjoiRENLM0oiLCJ0YWJsZV9pZCI6MTc3MTQ1ODk0Mzg4OSwiaXNzdWVkX2F0IjoiMjAyNi0wMi0xOFQyMzo1NTo0My44ODlaIiwiZXhwaXJlc19hdCI6IjIwMjctMDItMThUMjM6NTU6NDMuODg5WiIsIm5vbmNlIjoiODYzYTI0NzJmNjllMjA2ZSIsInZlcnNpb24iOiIxLjAiLCJzaWciOiJTNnpHNUJOdWFXa2JraVUwIn0="
+    }
+  ],
+  "orders": [
+    {
+      "id": 1771458587422,
+      "table_code": "B2G9X",
+      "table_id": 1771458092724,
+      "items": [
+        {
+          "id": 1771458579014,
+          "product_id": 1771458549475,
+          "product_name": "ROMO",
+          "base_price": 200000,
+          "options": [],
+          "quantity": 3,
+          "price": 200000
+        }
+      ],
+      "subtotal": 600000,
+      "tax": 60000,
+      "total": 660000,
+      "status": "delivered",
+      "createdAt": "2026-02-18T23:49:47.422Z",
+      "updatedAt": "2026-02-18T23:49:59.574Z",
+      "client_meta": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "timestamp": "2026-02-18T23:49:47.414Z"
+      }
+    },
+    {
+      "id": 1771459092250,
+      "table_code": "9ECHL",
+      "table_id": 1771458943695,
+      "items": [
+        {
+          "id": 1771459086593,
+          "product_id": 1771458549475,
+          "product_name": "ROMO",
+          "base_price": 200000,
+          "options": [],
+          "quantity": 1,
+          "price": 200000
+        }
+      ],
+      "subtotal": 200000,
+      "tax": 20000,
+      "total": 220000,
+      "status": "delivered",
+      "createdAt": "2026-02-18T23:58:12.250Z",
+      "updatedAt": "2026-02-18T23:58:51.690Z",
+      "client_meta": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "timestamp": "2026-02-18T23:58:12.184Z"
+      }
+    },
+    {
+      "id": 1771459105666,
+      "table_code": "9ECHL",
+      "table_id": 1771458943695,
+      "items": [
+        {
+          "id": 1771459103064,
+          "product_id": 1771458549475,
+          "product_name": "ROMO",
+          "base_price": 200000,
+          "options": [],
+          "quantity": 1,
+          "price": 200000
+        }
+      ],
+      "subtotal": 200000,
+      "tax": 20000,
+      "total": 220000,
+      "status": "delivered",
+      "createdAt": "2026-02-18T23:58:25.667Z",
+      "updatedAt": "2026-02-18T23:58:50.651Z",
+      "client_meta": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "timestamp": "2026-02-18T23:58:25.601Z"
+      }
+    },
+    {
+      "id": 1771459118972,
+      "table_code": "9ECHL",
+      "table_id": 1771458943695,
+      "items": [
+        {
+          "id": 1771459116497,
+          "product_id": 1771458549475,
+          "product_name": "ROMO",
+          "base_price": 200000,
+          "options": [],
+          "quantity": 1,
+          "price": 200000
+        }
+      ],
+      "subtotal": 200000,
+      "tax": 20000,
+      "total": 220000,
+      "status": "delivered",
+      "createdAt": "2026-02-18T23:58:38.972Z",
+      "updatedAt": "2026-02-18T23:58:52.563Z",
+      "client_meta": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "timestamp": "2026-02-18T23:58:38.905Z"
+      }
+    },
+    {
+      "id": 1771459495016,
+      "table_code": "9ECHL",
+      "table_id": 1771458943695,
+      "items": [
+        {
+          "id": 1771459479689,
+          "product_id": 1771458549475,
+          "product_name": "ROMO",
+          "base_price": 200000,
+          "options": [],
+          "quantity": 70,
+          "price": 200000
+        }
+      ],
+      "subtotal": 14000000,
+      "tax": 1400000,
+      "total": 15400000,
+      "status": "delivered",
+      "createdAt": "2026-02-19T00:04:55.016Z",
+      "updatedAt": "2026-02-19T00:05:07.832Z",
+      "client_meta": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "timestamp": "2026-02-19T00:04:54.947Z"
+      }
+    },
+    {
+      "id": 1771464503899,
+      "table_code": "9ECHL",
+      "table_id": 1771458943695,
+      "items": [
+        {
+          "id": 1771464499274,
+          "product_id": 1771458549475,
+          "product_name": "ROMO",
+          "base_price": 200000,
+          "options": [],
+          "quantity": 6,
+          "price": 200000
+        }
+      ],
+      "subtotal": 1200000,
+      "tax": 120000,
+      "total": 1320000,
+      "status": "delivered",
+      "createdAt": "2026-02-19T01:28:23.899Z",
+      "updatedAt": "2026-02-19T01:28:29.910Z",
+      "client_meta": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "timestamp": "2026-02-19T01:28:23.827Z"
+      }
+    },
+    {
+      "id": 1771465548853,
+      "table_code": "9ECHL",
+      "table_id": 1771458943695,
+      "items": [
+        {
+          "id": 1771465545625,
+          "product_id": 1771458549475,
+          "product_name": "ROMO",
+          "base_price": 2000,
+          "options": [],
+          "quantity": 1,
+          "price": 2000
+        }
+      ],
+      "subtotal": 2000,
+      "tax": 200,
+      "total": 2200,
+      "status": "delivered",
+      "createdAt": "2026-02-19T01:45:48.853Z",
+      "updatedAt": "2026-02-19T01:46:25.222Z",
+      "client_meta": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "timestamp": "2026-02-19T01:45:48.785Z"
+      }
+    },
+    {
+      "id": 1771466115914,
+      "table_code": "9ECHL",
+      "table_id": 1771458943695,
+      "items": [
+        {
+          "id": 1771466112676,
+          "product_id": 1771458549475,
+          "product_name": "ROMO",
+          "base_price": 2000,
+          "options": [],
+          "quantity": 1,
+          "price": 2000
+        }
+      ],
+      "subtotal": 2000,
+      "tax": 200,
+      "total": 2200,
+      "status": "delivered",
+      "createdAt": "2026-02-19T01:55:15.914Z",
+      "updatedAt": "2026-02-19T01:55:46.562Z",
+      "client_meta": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "timestamp": "2026-02-19T01:55:15.838Z"
+      }
+    },
+    {
+      "id": 1771466473936,
+      "table_code": "9ECHL",
+      "table_id": 1771458943695,
+      "items": [
+        {
+          "id": 1771466469653,
+          "product_id": 1771458549475,
+          "product_name": "ROMO",
+          "base_price": 2000,
+          "options": [],
+          "quantity": 2,
+          "price": 2000
+        }
+      ],
+      "subtotal": 4000,
+      "tax": 400,
+      "total": 4400,
+      "status": "delivered",
+      "createdAt": "2026-02-19T02:01:13.936Z",
+      "updatedAt": "2026-02-19T02:02:53.410Z",
+      "client_meta": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "timestamp": "2026-02-19T02:01:13.870Z"
+      }
+    },
+    {
+      "id": 1771466482173,
+      "table_code": "9ECHL",
+      "table_id": 1771458943695,
+      "items": [
+        {
+          "id": 1771466478742,
+          "product_id": 1771458549475,
+          "product_name": "ROMO",
+          "base_price": 2000,
+          "options": [],
+          "quantity": 1,
+          "price": 2000
+        }
+      ],
+      "subtotal": 2000,
+      "tax": 200,
+      "total": 2200,
+      "status": "delivered",
+      "createdAt": "2026-02-19T02:01:22.173Z",
+      "updatedAt": "2026-02-19T02:02:54.307Z",
+      "client_meta": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "timestamp": "2026-02-19T02:01:22.108Z"
+      }
+    },
+    {
+      "id": 1771530276973,
+      "table_code": "9ECHL",
+      "table_id": 1771458943695,
+      "items": [
+        {
+          "id": 1771530273887,
+          "product_id": 1771458549475,
+          "product_name": "ROMO",
+          "base_price": 2000,
+          "options": [],
+          "quantity": 1,
+          "price": 2000
+        }
+      ],
+      "subtotal": 2000,
+      "tax": 200,
+      "total": 2200,
+      "status": "delivered",
+      "createdAt": "2026-02-19T19:44:36.973Z",
+      "updatedAt": "2026-02-19T19:48:44.149Z",
+      "client_meta": {
+        "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+        "timestamp": "2026-02-19T19:44:36.903Z"
+      }
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "a1000fda-afb6-4702-9b43-e5d6aaf0a196",
+      "timestamp": "2026-02-18T23:41:24.986Z",
+      "user": "Sistema",
+      "action": "import",
+      "details": "Datos importados"
+    },
+    {
+      "id": "9e5d0524-21ae-4191-9c65-f426dcf8c44c",
+      "timestamp": "2026-02-18T23:41:32.819Z",
+      "user": "Sistema",
+      "action": "table_create",
+      "details": "Mesa creada: B2G9X (24h)"
+    },
+    {
+      "id": "28993669-3683-4ecf-892d-205bdfb6b58c",
+      "timestamp": "2026-02-18T23:47:59.787Z",
+      "user": "Sistema",
+      "action": "product_delete",
+      "details": "Producto eliminado: Ensalada César"
+    },
+    {
+      "id": "adb5a8f0-6b6f-438d-abf4-a89adbdfffbb",
+      "timestamp": "2026-02-18T23:48:03.964Z",
+      "user": "Sistema",
+      "action": "product_delete",
+      "details": "Producto eliminado: Pasta Alfredo"
+    },
+    {
+      "id": "8cc0d2c8-e1c3-4148-ab74-13037625f96b",
+      "timestamp": "2026-02-18T23:48:06.341Z",
+      "user": "Sistema",
+      "action": "product_delete",
+      "details": "Producto eliminado: Hamburguesa Clásica"
+    },
+    {
+      "id": "f6795d15-cf85-425f-92a7-852adb21b774",
+      "timestamp": "2026-02-18T23:48:08.439Z",
+      "user": "Sistema",
+      "action": "product_delete",
+      "details": "Producto eliminado: Limonada Natural"
+    },
+    {
+      "id": "aa6f4c26-f11a-4561-9f6c-67fd0e7a77cb",
+      "timestamp": "2026-02-18T23:48:10.288Z",
+      "user": "Sistema",
+      "action": "product_delete",
+      "details": "Producto eliminado: Tiramisú"
+    },
+    {
+      "id": "0efa8511-bf11-4d5c-9f27-b5e935ac6673",
+      "timestamp": "2026-02-18T23:49:09.476Z",
+      "user": "Sistema",
+      "action": "product_create",
+      "details": "Producto creado: ROMO"
+    },
+    {
+      "id": "0eeb5ec7-098a-400b-ab3a-1948f463d300",
+      "timestamp": "2026-02-18T23:49:47.423Z",
+      "user": "Sistema",
+      "action": "order_create",
+      "details": "Pedido #1771458587422 - Mesa B2G9X - $660000"
+    },
+    {
+      "id": "5147a3c5-adc9-43ea-abc5-44b734ec9559",
+      "timestamp": "2026-02-18T23:49:53.230Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771458587422 → preparing"
+    },
+    {
+      "id": "cda2d916-9776-4ca6-8e64-bc88f5961ba4",
+      "timestamp": "2026-02-18T23:49:56.199Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771458587422 → ready"
+    },
+    {
+      "id": "403bd7d1-5cc4-44d3-848a-300a90bc4074",
+      "timestamp": "2026-02-18T23:49:59.576Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771458587422 → delivered"
+    },
+    {
+      "id": "1db18318-acab-4b32-9419-39c757ff2405",
+      "timestamp": "2026-02-18T23:55:43.768Z",
+      "user": "Sistema",
+      "action": "table_create",
+      "details": "Mesa creada: 9ECHL"
+    },
+    {
+      "id": "fcc38e4c-cbbf-4200-8c88-821ea0988e18",
+      "timestamp": "2026-02-18T23:55:43.808Z",
+      "user": "Sistema",
+      "action": "table_create",
+      "details": "Mesa creada: KC5VM"
+    },
+    {
+      "id": "1bb02b6a-a49d-4afd-bb74-676a1942eb31",
+      "timestamp": "2026-02-18T23:55:43.845Z",
+      "user": "Sistema",
+      "action": "table_create",
+      "details": "Mesa creada: WJZXP"
+    },
+    {
+      "id": "02d2812f-7fd7-404e-ba6a-6b3055e6388b",
+      "timestamp": "2026-02-18T23:55:43.882Z",
+      "user": "Sistema",
+      "action": "table_create",
+      "details": "Mesa creada: 6C8QR"
+    },
+    {
+      "id": "e6f16b59-b6f7-4a92-a797-c68b39e4332c",
+      "timestamp": "2026-02-18T23:55:43.915Z",
+      "user": "Sistema",
+      "action": "table_create",
+      "details": "Mesa creada: DCK3J"
+    },
+    {
+      "id": "8f232829-4103-400e-ab30-7f8a9091e34e",
+      "timestamp": "2026-02-18T23:55:51.511Z",
+      "user": "Sistema",
+      "action": "table_status",
+      "details": "Mesa DCK3J → inactive"
+    },
+    {
+      "id": "62c8c3ca-e02a-4aaa-bc2b-ec10a6d9b3b9",
+      "timestamp": "2026-02-18T23:58:12.252Z",
+      "user": "Sistema",
+      "action": "order_create",
+      "details": "Pedido #1771459092250 - Mesa 9ECHL - $220000"
+    },
+    {
+      "id": "912a213b-7607-4af4-b27e-9ce9af2d0942",
+      "timestamp": "2026-02-18T23:58:17.732Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771459092250 → preparing"
+    },
+    {
+      "id": "6acad450-7a36-4d5b-9d64-b33d0b7b2d72",
+      "timestamp": "2026-02-18T23:58:25.669Z",
+      "user": "Sistema",
+      "action": "order_create",
+      "details": "Pedido #1771459105666 - Mesa 9ECHL - $220000"
+    },
+    {
+      "id": "e0c383ed-a7f7-4ac3-9d64-f98c4139fb06",
+      "timestamp": "2026-02-18T23:58:28.804Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771459105666 → preparing"
+    },
+    {
+      "id": "8af3d977-6b7c-4b72-a630-c9f771f5a8ca",
+      "timestamp": "2026-02-18T23:58:38.974Z",
+      "user": "Sistema",
+      "action": "order_create",
+      "details": "Pedido #1771459118972 - Mesa 9ECHL - $220000"
+    },
+    {
+      "id": "b832f69d-8f68-401f-844b-1e1db0ce0d69",
+      "timestamp": "2026-02-18T23:58:42.237Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771459105666 → ready"
+    },
+    {
+      "id": "341dc89b-e76a-456f-aedf-69a995b2f966",
+      "timestamp": "2026-02-18T23:58:47.164Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771459092250 → ready"
+    },
+    {
+      "id": "fe6ac25f-6f3a-4763-9577-abf290aa2c4e",
+      "timestamp": "2026-02-18T23:58:48.182Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771459118972 → preparing"
+    },
+    {
+      "id": "e30fd7f3-014d-48ca-8f44-6c6fbb11597c",
+      "timestamp": "2026-02-18T23:58:49.339Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771459118972 → ready"
+    },
+    {
+      "id": "ba7cb57c-1047-41fe-bd8b-e39f9cbc7300",
+      "timestamp": "2026-02-18T23:58:50.653Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771459105666 → delivered"
+    },
+    {
+      "id": "925787b5-084d-44fa-958d-7d048ccd26a6",
+      "timestamp": "2026-02-18T23:58:51.692Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771459092250 → delivered"
+    },
+    {
+      "id": "1660a21c-89d7-436a-a42e-91ba133944d5",
+      "timestamp": "2026-02-18T23:58:52.564Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771459118972 → delivered"
+    },
+    {
+      "id": "a9a6a921-d848-4597-8152-24148a3d9556",
+      "timestamp": "2026-02-19T00:04:55.018Z",
+      "user": "Sistema",
+      "action": "order_create",
+      "details": "Pedido #1771459495016 - Mesa 9ECHL - $15400000"
+    },
+    {
+      "id": "29a4a449-8709-4805-a38b-85db451ac880",
+      "timestamp": "2026-02-19T00:05:01.758Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771459495016 → preparing"
+    },
+    {
+      "id": "7a6a7c38-1942-437b-a067-223fd0898af8",
+      "timestamp": "2026-02-19T00:05:04.952Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771459495016 → ready"
+    },
+    {
+      "id": "1ad54df9-a2cd-4a23-b09d-23a6b9fa1893",
+      "timestamp": "2026-02-19T00:05:07.834Z",
+      "user": "Sistema",
+      "action": "order_status",
+      "details": "Pedido #1771459495016 → delivered"
+    },
+    {
+      "id": "16433773-600e-4e8d-b8a0-d44ea99bbe82",
+      "timestamp": "2026-02-19T00:46:55.856Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Usuario admin inició sesión"
+    },
+    {
+      "id": "9ac2df00-7a5c-4451-8346-c734230ef0d0",
+      "timestamp": "2026-02-19T00:51:32.520Z",
+      "user": "admin",
+      "action": "table_status",
+      "details": "Mesa DCK3J → active"
+    },
+    {
+      "id": "476a3615-e31f-4df0-abc8-abcd9f956bde",
+      "timestamp": "2026-02-19T00:51:33.716Z",
+      "user": "admin",
+      "action": "table_status",
+      "details": "Mesa DCK3J → inactive"
+    },
+    {
+      "id": "65b07fe9-244f-4d0e-954a-36bfc583c32b",
+      "timestamp": "2026-02-19T00:51:58.998Z",
+      "user": "admin",
+      "action": "logout",
+      "details": "Usuario admin cerró sesión"
+    },
+    {
+      "id": "246a8696-17f0-4f40-9507-35672befd2b3",
+      "timestamp": "2026-02-19T00:52:07.423Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Usuario admin inició sesión"
+    },
+    {
+      "id": "67e712dd-d5ae-48ff-8320-4e29a5fcf6b3",
+      "timestamp": "2026-02-19T00:52:13.295Z",
+      "user": "admin",
+      "action": "logout",
+      "details": "Usuario admin cerró sesión"
+    },
+    {
+      "id": "eaeaf681-8b7f-4137-bed5-535b6d63e108",
+      "timestamp": "2026-02-19T01:25:20.298Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Usuario admin inició sesión"
+    },
+    {
+      "id": "132c679e-4a20-4df4-bbbb-4e8da0529ce9",
+      "timestamp": "2026-02-19T01:26:44.529Z",
+      "user": "admin",
+      "action": "logout",
+      "details": "Usuario admin cerró sesión"
+    },
+    {
+      "id": "b80ac783-f674-436b-b35c-e9af7f15524d",
+      "timestamp": "2026-02-19T01:26:47.184Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Usuario admin inició sesión"
+    },
+    {
+      "id": "61b3de5f-b686-4f80-964a-bd0cecf076ab",
+      "timestamp": "2026-02-19T01:26:57.780Z",
+      "user": "admin",
+      "action": "logout",
+      "details": "Usuario admin cerró sesión"
+    },
+    {
+      "id": "26d40681-dd39-4979-945a-a35d0c665eea",
+      "timestamp": "2026-02-19T01:27:07.885Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Usuario admin inició sesión"
+    },
+    {
+      "id": "ece33710-c201-4c85-a682-1ac1520c5896",
+      "timestamp": "2026-02-19T01:28:23.900Z",
+      "user": "Cliente",
+      "action": "order_create",
+      "details": "Pedido #1771464503899 - Mesa 9ECHL - $1320000"
+    },
+    {
+      "id": "03b369db-4354-4cd4-b895-a47080a2a443",
+      "timestamp": "2026-02-19T01:28:27.031Z",
+      "user": "admin",
+      "action": "order_status",
+      "details": "Pedido #1771464503899 → preparing"
+    },
+    {
+      "id": "d9717a55-cad0-418d-b40f-ee9c52db8ce2",
+      "timestamp": "2026-02-19T01:28:28.434Z",
+      "user": "admin",
+      "action": "order_status",
+      "details": "Pedido #1771464503899 → ready"
+    },
+    {
+      "id": "9f654056-6fed-4c2f-bdca-dd92a60fc6cb",
+      "timestamp": "2026-02-19T01:28:29.911Z",
+      "user": "admin",
+      "action": "order_status",
+      "details": "Pedido #1771464503899 → delivered"
+    },
+    {
+      "id": "79874773-d69c-454f-b888-9fce383e3a4d",
+      "timestamp": "2026-02-19T01:42:44.609Z",
+      "user": "admin",
+      "action": "table_status",
+      "details": "Mesa 9ECHL → inactive"
+    },
+    {
+      "id": "897682b4-1294-44a4-b4ad-2096cc3e6a96",
+      "timestamp": "2026-02-19T01:42:46.177Z",
+      "user": "admin",
+      "action": "table_status",
+      "details": "Mesa 9ECHL → active"
+    },
+    {
+      "id": "f83e8b35-f02f-4386-9ae6-f62883d7d434",
+      "timestamp": "2026-02-19T01:42:47.492Z",
+      "user": "admin",
+      "action": "table_status",
+      "details": "Mesa 9ECHL → inactive"
+    },
+    {
+      "id": "b8e203cb-7c00-4754-a45f-c7f885cd4e15",
+      "timestamp": "2026-02-19T01:42:48.214Z",
+      "user": "admin",
+      "action": "table_status",
+      "details": "Mesa 9ECHL → active"
+    },
+    {
+      "id": "e94eca2d-e31c-42e5-a5ad-ba0311b474ae",
+      "timestamp": "2026-02-19T01:43:03.762Z",
+      "user": "admin",
+      "action": "product_update",
+      "details": "Producto actualizado: ROMO"
+    },
+    {
+      "id": "d17520bb-9a77-49aa-913e-0ac51d57f53a",
+      "timestamp": "2026-02-19T01:44:23.475Z",
+      "user": "admin",
+      "action": "logout",
+      "details": "Usuario admin cerró sesión"
+    },
+    {
+      "id": "32c3fd47-bf40-46cf-84de-b0b876986315",
+      "timestamp": "2026-02-19T01:44:26.882Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Usuario admin inició sesión"
+    },
+    {
+      "id": "9deeb3de-65e6-43a0-8fa6-6e4905461455",
+      "timestamp": "2026-02-19T01:45:48.854Z",
+      "user": "Cliente",
+      "action": "order_create",
+      "details": "Pedido #1771465548853 - Mesa 9ECHL - $2200"
+    },
+    {
+      "id": "ff451aaa-daa6-40e4-82c9-e9870bff30a7",
+      "timestamp": "2026-02-19T01:45:52.599Z",
+      "user": "admin",
+      "action": "order_status",
+      "details": "Pedido #1771465548853 → preparing"
+    },
+    {
+      "id": "76ad093f-0c81-4cc7-91e7-593a74379412",
+      "timestamp": "2026-02-19T01:46:21.034Z",
+      "user": "admin",
+      "action": "order_status",
+      "details": "Pedido #1771465548853 → ready"
+    },
+    {
+      "id": "68479398-b137-4f46-a5d3-5972473230db",
+      "timestamp": "2026-02-19T01:46:25.223Z",
+      "user": "admin",
+      "action": "order_status",
+      "details": "Pedido #1771465548853 → delivered"
+    },
+    {
+      "id": "70a8cdca-cbb3-43eb-b771-dd5ae0dc1e35",
+      "timestamp": "2026-02-19T01:50:19.787Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Admin admin inició sesión"
+    },
+    {
+      "id": "b548b2e3-023b-4fb2-bea9-32091268ff89",
+      "timestamp": "2026-02-19T01:52:01.014Z",
+      "user": "admin",
+      "action": "logout",
+      "details": "Usuario admin (admin) cerró sesión"
+    },
+    {
+      "id": "0706d60b-f3e9-4ec0-ad1d-644cb58ca899",
+      "timestamp": "2026-02-19T01:53:04.985Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Cocina/Admin admin inició sesión"
+    },
+    {
+      "id": "4bc6833c-44ae-4131-8049-e840fa2b8ad2",
+      "timestamp": "2026-02-19T01:53:09.053Z",
+      "user": "admin",
+      "action": "logout",
+      "details": "Usuario admin (admin) cerró sesión"
+    },
+    {
+      "id": "0fae5be1-9100-4909-a58d-50816699926b",
+      "timestamp": "2026-02-19T01:53:12.230Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Cocina/Admin admin inició sesión"
+    },
+    {
+      "id": "e153f0c8-1df9-4545-b629-833449dbaa0f",
+      "timestamp": "2026-02-19T01:53:14.467Z",
+      "user": "admin",
+      "action": "logout",
+      "details": "Usuario admin (admin) cerró sesión"
+    },
+    {
+      "id": "0ed770ba-03cd-4a7c-b5db-ddfc8f8f87ba",
+      "timestamp": "2026-02-19T01:53:19.902Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Admin admin inició sesión"
+    },
+    {
+      "id": "f1be35ef-937a-4f8f-8aff-02067d06ebc1",
+      "timestamp": "2026-02-19T01:54:44.960Z",
+      "user": "Anónimo",
+      "action": "login_failed",
+      "details": "Intento fallido cocina: cocina"
+    },
+    {
+      "id": "f547fe57-4bac-4923-9e3e-653c40754b8c",
+      "timestamp": "2026-02-19T01:54:48.263Z",
+      "user": "Anónimo",
+      "action": "login_failed",
+      "details": "Intento fallido cocina: cocina"
+    },
+    {
+      "id": "17dea099-051f-41a9-894c-866f3dbbd625",
+      "timestamp": "2026-02-19T01:55:02.064Z",
+      "user": "cocina",
+      "action": "login_success",
+      "details": "Cocina/Admin cocina inició sesión"
+    },
+    {
+      "id": "b1d53492-23e6-4cf5-b89e-ea5309111b90",
+      "timestamp": "2026-02-19T01:55:15.915Z",
+      "user": "Cliente",
+      "action": "order_create",
+      "details": "Pedido #1771466115914 - Mesa 9ECHL - $2200"
+    },
+    {
+      "id": "133fcd5b-e4ab-4a51-ba10-7b2888e1939d",
+      "timestamp": "2026-02-19T01:55:20.846Z",
+      "user": "cocina",
+      "action": "order_status",
+      "details": "Pedido #1771466115914 → preparing"
+    },
+    {
+      "id": "fbafe980-b4ac-44ba-bf8b-6a1ddb67825b",
+      "timestamp": "2026-02-19T01:55:40.183Z",
+      "user": "cocina",
+      "action": "order_status",
+      "details": "Pedido #1771466115914 → preparing"
+    },
+    {
+      "id": "7b8f9511-e4a1-4fa8-b736-63587fae1641",
+      "timestamp": "2026-02-19T01:55:46.564Z",
+      "user": "cocina",
+      "action": "order_status",
+      "details": "Pedido #1771466115914 → delivered"
+    },
+    {
+      "id": "a40f3ffa-4ebe-475e-9bad-3db11ac34f9e",
+      "timestamp": "2026-02-19T01:57:06.546Z",
+      "user": "cocina",
+      "action": "logout",
+      "details": "Usuario cocina (kitchen) cerró sesión"
+    },
+    {
+      "id": "f4ef3b11-0f48-4cbb-9e7d-bb6cc7b077e6",
+      "timestamp": "2026-02-19T01:58:56.074Z",
+      "user": "cocina",
+      "action": "login_success",
+      "details": "Cocina/Admin cocina inició sesión"
+    },
+    {
+      "id": "70b10574-8fc9-4a3f-abf9-dc28bf1f4b91",
+      "timestamp": "2026-02-19T02:01:13.938Z",
+      "user": "Cliente",
+      "action": "order_create",
+      "details": "Pedido #1771466473936 - Mesa 9ECHL - $4400"
+    },
+    {
+      "id": "c35f0303-fea4-48ff-9235-b7a112451448",
+      "timestamp": "2026-02-19T02:01:22.176Z",
+      "user": "Cliente",
+      "action": "order_create",
+      "details": "Pedido #1771466482173 - Mesa 9ECHL - $2200"
+    },
+    {
+      "id": "8ae91bd8-decd-4f1d-8cfc-42187c351837",
+      "timestamp": "2026-02-19T02:01:25.220Z",
+      "user": "cocina",
+      "action": "order_status",
+      "details": "Pedido #1771466482173 → preparing"
+    },
+    {
+      "id": "3ea5a54d-f0f0-4ee7-9e1e-84e0b63a4b7c",
+      "timestamp": "2026-02-19T02:01:32.977Z",
+      "user": "cocina",
+      "action": "order_status",
+      "details": "Pedido #1771466473936 → preparing"
+    },
+    {
+      "id": "59289210-fc44-4dc6-817a-ace23265a405",
+      "timestamp": "2026-02-19T02:02:48.788Z",
+      "user": "cocina",
+      "action": "order_status",
+      "details": "Pedido #1771466482173 → ready"
+    },
+    {
+      "id": "ff44ddd9-25ef-4c79-9806-934bc8bfa6fa",
+      "timestamp": "2026-02-19T02:02:52.045Z",
+      "user": "cocina",
+      "action": "order_status",
+      "details": "Pedido #1771466473936 → ready"
+    },
+    {
+      "id": "358109d9-bcdb-4d2a-941f-b551e0020d67",
+      "timestamp": "2026-02-19T02:02:53.416Z",
+      "user": "cocina",
+      "action": "order_status",
+      "details": "Pedido #1771466473936 → delivered"
+    },
+    {
+      "id": "d3d4f3d0-964a-4d9c-a070-cc5049bbf064",
+      "timestamp": "2026-02-19T02:02:54.311Z",
+      "user": "cocina",
+      "action": "order_status",
+      "details": "Pedido #1771466482173 → delivered"
+    },
+    {
+      "id": "48ff1000-b76e-41f5-a218-90be45bc12dd",
+      "timestamp": "2026-02-19T02:03:17.970Z",
+      "user": "cocina",
+      "action": "login_success",
+      "details": "Cocina/Admin cocina inició sesión"
+    },
+    {
+      "id": "b392988a-7af6-40bb-a779-4697cb4aafae",
+      "timestamp": "2026-02-19T02:03:22.284Z",
+      "user": "Anónimo",
+      "action": "login_failed",
+      "details": "Intento fallido admin: cocina"
+    },
+    {
+      "id": "ed4dfb01-59a3-42f8-ad55-2926fb326ef0",
+      "timestamp": "2026-02-19T02:03:26.058Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Admin admin inició sesión"
+    },
+    {
+      "id": "497a9ac5-99bc-4c4c-aea8-5cdd5116f6fd",
+      "timestamp": "2026-02-19T19:43:38.557Z",
+      "user": "Anónimo",
+      "action": "login_failed",
+      "details": "Intento fallido admin: admin"
+    },
+    {
+      "id": "05338605-fed7-47ad-bb04-bf0e13af85fa",
+      "timestamp": "2026-02-19T19:43:45.503Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Admin admin inició sesión"
+    },
+    {
+      "id": "d192c078-58bf-40fe-a3c9-7aa9a5a042f9",
+      "timestamp": "2026-02-19T19:44:36.975Z",
+      "user": "Cliente",
+      "action": "order_create",
+      "details": "Pedido #1771530276973 - Mesa 9ECHL - $2200"
+    },
+    {
+      "id": "62e94d71-0da0-49a5-af5f-1136848bb234",
+      "timestamp": "2026-02-19T19:44:43.331Z",
+      "user": "admin",
+      "action": "order_status",
+      "details": "Pedido #1771530276973 → preparing"
+    },
+    {
+      "id": "48f48861-fca7-49d5-83a2-51252dfeffd1",
+      "timestamp": "2026-02-19T19:47:22.235Z",
+      "user": "Anónimo",
+      "action": "login_failed",
+      "details": "Intento fallido admin: cocina"
+    },
+    {
+      "id": "796e97e4-57f2-47a6-a1dc-c1f436bfe685",
+      "timestamp": "2026-02-19T19:47:28.779Z",
+      "user": "Anónimo",
+      "action": "login_failed",
+      "details": "Intento fallido admin: cocina"
+    },
+    {
+      "id": "f7fbd44d-0886-4773-a46d-2d3347c21109",
+      "timestamp": "2026-02-19T19:47:53.526Z",
+      "user": "Anónimo",
+      "action": "login_failed",
+      "details": "Intento fallido admin: cocina"
+    },
+    {
+      "id": "4550dd34-ec34-4d5e-b42c-5c517651d172",
+      "timestamp": "2026-02-19T19:47:58.827Z",
+      "user": "Anónimo",
+      "action": "login_failed",
+      "details": "Intento fallido admin: cocina"
+    },
+    {
+      "id": "40903955-2676-4af1-b22f-a25df6e4e187",
+      "timestamp": "2026-02-19T19:48:07.746Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Admin admin inició sesión"
+    },
+    {
+      "id": "59dbf3a0-8c5d-4a0a-950d-8ccc3f5a7201",
+      "timestamp": "2026-02-19T19:48:17.742Z",
+      "user": "Anónimo",
+      "action": "login_failed",
+      "details": "Intento fallido admin: cocina"
+    },
+    {
+      "id": "5890d679-a6d9-49b0-a8f7-092f8c8a0b69",
+      "timestamp": "2026-02-19T19:48:28.324Z",
+      "user": "admin",
+      "action": "login_success",
+      "details": "Admin admin inició sesión"
+    },
+    {
+      "id": "4316abaf-7a7d-4efb-9fac-56c6e0123aae",
+      "timestamp": "2026-02-19T19:48:42.104Z",
+      "user": "admin",
+      "action": "order_status",
+      "details": "Pedido #1771530276973 → ready"
+    },
+    {
+      "id": "acd038ec-40f3-4b78-8e3d-a6e4f472a640",
+      "timestamp": "2026-02-19T19:48:44.151Z",
+      "user": "admin",
+      "action": "order_status",
+      "details": "Pedido #1771530276973 → delivered"
+    },
+    {
+      "id": "dfa34834-0944-45f4-9c4e-2b67b981ed9b",
+      "timestamp": "2026-02-19T20:31:05.308Z",
+      "user": "admin",
+      "action": "logout",
+      "details": "Usuario admin (admin) cerró sesión"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+      "role": "admin",
+      "createdAt": "2026-02-19T00:41:15.543Z"
+    },
+    {
+      "id": 1771465705995,
+      "username": "cocina",
+      "password": "17fb2b2ef0554390dfdcb2eb9099e1279e12bd4b4b01fb33a1d5f4c0ce15e85c",
+      "role": "kitchen",
+      "type": "kitchen",
+      "createdAt": "2026-02-19T01:48:25.995Z"
+    }
+  ]
+}

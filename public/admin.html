@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Buena Mesa - Panel de Administración</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+
+    <!-- Verificación de sesión -->
+    <script>
+        // Verificar autenticación inmediatamente
+        (function() {
+            fetch('/api/check-auth')
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.authenticated) {
+                        window.location.replace('/login');
+                    }
+                })
+                .catch(() => {
+                    window.location.replace('/login');
+                });
+        })();
+    </script>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-cog text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">Panel de Administración</h1>
+                        <p class="text-xs text-slate-400">La Buena Mesa</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="/" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm transition-colors flex items-center gap-2">
+                        <i class="fas fa-external-link-alt"></i>Ver Menú Público
+                    </a>
+                    <button onclick="logout()" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm transition-colors flex items-center gap-2">
+                        <i class="fas fa-sign-out-alt"></i>Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-white border-b border-gray-200 sticky top-[73px] z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="flex space-x-8">
+                <button onclick="switchAdminTab('products')" class="admin-tab active py-4 px-1 border-b-2 border-blue-600 text-blue-600 font-medium text-sm" data-tab="products">
+                    <i class="fas fa-utensils mr-2"></i>Productos
+                </button>
+                <button onclick="switchAdminTab('categories')" class="admin-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm" data-tab="categories">
+                    <i class="fas fa-tags mr-2"></i>Categorías
+                </button>
+                <button onclick="switchAdminTab('tables')" class="admin-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm" data-tab="tables">
+                    <i class="fas fa-chair mr-2"></i>Mesas & QR
+                </button>
+                <button onclick="switchAdminTab('orders')" class="admin-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm" data-tab="orders">
+                    <i class="fas fa-clipboard-list mr-2"></i>Pedidos
+                </button>
+                <button onclick="switchAdminTab('logs')" class="admin-tab py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm" data-tab="logs">
+                    <i class="fas fa-history mr-2"></i>Auditoría
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="admin-tab-content" class="min-h-[calc(100vh-250px)]"></div>
+    </main>
+
+    <script>
+        // ==================== CONFIG ====================
+        const API_URL = '';
+        const socket = io();
+
+        // ==================== STATE ====================
+        const AppState = {
+            products: [],
+            categories: [],
+            tables: [],
+            orders: [],
+            auditLogs: [],
+            currentAdminTab: 'products'
+        };
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAdminData();
+            setupSocketListeners();
+        });
+
+        function setupSocketListeners() {
+            socket.on('connect', () => {
+                console.log('Conectado al servidor');
+            });
+
+            socket.on('order:new', () => {
+                if (AppState.currentAdminTab === 'orders') {
+                    loadAdminData();
+                    showToast('Nuevo pedido recibido', 'info');
+                }
+            });
+        }
+
+        // ==================== AUTH ====================
+        async function logout() {
+            try {
+                const response = await fetch('/logout', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    window.location.replace('/login');
+                } else {
+                    throw new Error('Error al cerrar sesión');
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+                // Forzar redirección de todas formas
+                window.location.replace('/login');
+            }
+        }
+
+        // ==================== API ====================
+        async function api(endpoint, options = {}) {
+            const res = await fetch(`${API_URL}/api${endpoint}`, {
+                headers: { 'Content-Type': 'application/json' },
+                ...options,
+                body: options.body ? JSON.stringify(options.body) : undefined
+            });
+            
+            // Si recibimos 401, redirigir al login
+            if (res.status === 401) {
+                window.location.replace('/login');
+                throw new Error('Sesión expirada');
+            }
+            
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text);
+            }
+            return res.json();
+        }
+
+        async function loadAdminData() {
+            try {
+                const [products, categories, tables, orders, logs] = await Promise.all([
+                    api('/products'),
+                    api('/categories'),
+                    api('/tables'),
+                    api('/orders'),
+                    api('/logs')
+                ]);
+                AppState.products = products;
+                AppState.categories = categories;
+                AppState.tables = tables;
+                AppState.orders = orders;
+                AppState.auditLogs = logs;
+                renderAdminTab(AppState.currentAdminTab);
+            } catch (err) {
+                showToast('Error cargando datos: ' + err.message, 'error');
+            }
+        }
+
+        function switchAdminTab(tab) {
+            AppState.currentAdminTab = tab;
+            
+            // Update tab styles
+            document.querySelectorAll('.admin-tab').forEach(btn => {
+                if (btn.dataset.tab === tab) {
+                    btn.classList.remove('border-transparent', 'text-gray-500');
+                    btn.classList.add('border-blue-600', 'text-blue-600');
+                } else {
+                    btn.classList.add('border-transparent', 'text-gray-500');
+                    btn.classList.remove('border-blue-600', 'text-blue-600');
+                }
+            });
+            
+            renderAdminTab(tab);
+        }
+
+        function renderAdminTab(tab) {
+            const container = document.getElementById('admin-tab-content');
+            const renderers = {
+                products: renderProductsAdmin,
+                categories: renderCategoriesAdmin,
+                tables: renderTablesAdmin,
+                orders: renderOrdersAdmin,
+                logs: renderLogsAdmin
+            };
+            container.innerHTML = renderers[tab] ? renderers[tab]() : '';
+        }
+
+        // ==================== ADMIN: PRODUCTS ====================
+        function renderProductsAdmin() {
+            return `
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Gestión de Productos</h3>
+                    <div class="flex gap-2">
+                        <button onclick="exportData()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm">
+                            <i class="fas fa-file-export mr-2"></i>Exportar
+                        </button>
+                        <button onclick="document.getElementById('import-file').click()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm">
+                            <i class="fas fa-file-import mr-2"></i>Importar
+                        </button>
+                        <input type="file" id="import-file" class="hidden" accept=".json" onchange="importData(this)">
+                        <button onclick="openProductModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                            <i class="fas fa-plus mr-2"></i>Nuevo Producto
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="px-4 py-3 font-medium text-gray-700">Producto</th>
+                                <th class="px-4 py-3 font-medium text-gray-700">Categoría</th>
+                                <th class="px-4 py-3 font-medium text-gray-700">Precio</th>
+                                <th class="px-4 py-3 font-medium text-gray-700">Estado</th>
+                                <th class="px-4 py-3 font-medium text-gray-700 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            ${AppState.products.map(p => {
+                                const cat = AppState.categories.find(c => c.id === p.category_id);
+                                return `
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center gap-3">
+                                            <img src="${p.image}" alt="${p.name}" class="w-10 h-10 rounded-lg object-cover bg-gray-200">
+                                            <div>
+                                                <div class="font-medium text-gray-900">${p.name}</div>
+                                                <div class="text-xs text-gray-500">${p.description?.substring(0, 30)}...</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3"><span class="px-2 py-1 bg-gray-100 rounded-full text-xs">${cat?.name || 'Sin cat.'}</span></td>
+                                    <td class="px-4 py-3 font-medium">$${p.price.toFixed(2)}</td>
+                                    <td class="px-4 py-3">
+                                        <span class="px-2 py-1 rounded-full text-xs ${p.available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                            ${p.available ? 'Disponible' : 'No disp.'}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <button onclick="editProduct(${p.id})" class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i></button>
+                                        <button onclick="deleteProduct(${p.id})" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                ${AppState.products.length === 0 ? '<div class="text-center py-12 text-gray-500">No hay productos registrados</div>' : ''}
+            `;
+        }
+
+        function openProductModal(productId = null) {
+            const p = productId ? AppState.products.find(x => x.id === productId) : null;
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+            modal.id = 'product-edit-modal';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">${p ? 'Editar' : 'Nuevo'} Producto</h3>
+                        <button onclick="closeProductModal()" class="p-2 hover:bg-gray-100 rounded-full"><i class="fas fa-times"></i></button>
+                    </div>
+                    <form id="product-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                            <input type="text" id="prod-name" value="${p?.name || ''}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                            <textarea id="prod-desc" rows="3" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">${p?.description || ''}</textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Precio ($)</label>
+                                <input type="number" id="prod-price" step="0.01" min="0" value="${p?.price || ''}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+                                <select id="prod-category" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                                    ${AppState.categories.map(c => `<option value="${c.id}" ${p?.category_id === c.id ? 'selected' : ''}>${c.name}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">URL Imagen</label>
+                            <input type="url" id="prod-image" value="${p?.image || ''}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="prod-available" ${!p || p.available ? 'checked' : ''} class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                            <label for="prod-available" class="text-sm font-medium text-gray-700">Disponible</label>
+                        </div>
+                        <div class="flex justify-end gap-3 pt-4 border-t">
+                            <button type="button" onclick="closeProductModal()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Cancelar</button>
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">${p ? 'Guardar Cambios' : 'Crear Producto'}</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('product-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveProduct(productId);
+            });
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-edit-modal')?.remove();
+        }
+
+        async function saveProduct(productId) {
+            const data = {
+                name: document.getElementById('prod-name').value,
+                description: document.getElementById('prod-desc').value,
+                price: parseFloat(document.getElementById('prod-price').value),
+                category_id: parseInt(document.getElementById('prod-category').value),
+                image: document.getElementById('prod-image').value,
+                available: document.getElementById('prod-available').checked,
+                options: []
+            };
+            
+            try {
+                if (productId) {
+                    await api(`/products/${productId}`, { method: 'PUT', body: data });
+                    showToast('Producto actualizado correctamente');
+                } else {
+                    await api('/products', { method: 'POST', body: data });
+                    showToast('Producto creado correctamente');
+                }
+                closeProductModal();
+                loadAdminData();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function editProduct(id) {
+            openProductModal(id);
+        }
+
+        async function deleteProduct(id) {
+            if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+            try {
+                await api(`/products/${id}`, { method: 'DELETE' });
+                showToast('Producto eliminado');
+                loadAdminData();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        // ==================== ADMIN: CATEGORIES ====================
+        function renderCategoriesAdmin() {
+            return `
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Categorías</h3>
+                    <button onclick="openCategoryModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                        <i class="fas fa-plus mr-2"></i>Nueva Categoría
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    ${AppState.categories.map(c => `
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 ${c.color || 'bg-blue-500'} rounded-lg flex items-center justify-center text-white">
+                                        <i class="fas ${c.icon || 'fa-tag'} text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900">${c.name}</h4>
+                                        <p class="text-sm text-gray-500">${AppState.products.filter(p => p.category_id === c.id).length} productos</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="editCategory(${c.id})" class="text-gray-400 hover:text-blue-600 p-1"><i class="fas fa-edit"></i></button>
+                                    <button onclick="deleteCategory(${c.id})" class="text-gray-400 hover:text-red-600 p-1"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                ${AppState.categories.length === 0 ? '<div class="text-center py-12 text-gray-500">No hay categorías registradas</div>' : ''}
+            `;
+        }
+
+        function openCategoryModal(catId = null) {
+            const c = catId ? AppState.categories.find(x => x.id === catId) : null;
+            const name = prompt(c ? 'Editar nombre de categoría:' : 'Nombre de la nueva categoría:', c?.name || '');
+            if (!name) return;
+            
+            const save = async () => {
+                try {
+                    if (catId) {
+                        await api(`/categories/${catId}`, { method: 'PUT', body: { name } });
+                        showToast('Categoría actualizada');
+                    } else {
+                        await api('/categories', { method: 'POST', body: { name } });
+                        showToast('Categoría creada');
+                    }
+                    loadAdminData();
+                } catch (err) {
+                    showToast(err.message, 'error');
+                }
+            };
+            save();
+        }
+
+        function editCategory(id) {
+            openCategoryModal(id);
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('¿Eliminar esta categoría? Los productos asociados quedarán sin categoría.')) return;
+            try {
+                await api(`/categories/${id}`, { method: 'DELETE' });
+                showToast('Categoría eliminada');
+                loadAdminData();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        // ==================== ADMIN: TABLES ====================
+        function renderTablesAdmin() {
+            return `
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Mesas y Códigos QR</h3>
+                    <div class="flex gap-2">
+                        <button onclick="generateBatchTables()" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm">
+                            <i class="fas fa-magic mr-2"></i>Generar Batch
+                        </button>
+                        <button onclick="openTableModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                            <i class="fas fa-plus mr-2"></i>Nueva Mesa
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    ${AppState.tables.map(t => `
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="font-bold text-lg text-gray-900">Mesa ${t.code}</h4>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getTableStatusColor(t.status)}">${t.status}</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="showQRCode('${t.code}')" class="text-blue-600 hover:text-blue-800 p-1" title="Ver QR"><i class="fas fa-qrcode text-xl"></i></button>
+                                    <button onclick="deleteTable('${t.code}')" class="text-red-600 hover:text-red-800 p-1"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-3 space-y-1">
+                                <p><i class="fas fa-clock mr-1"></i> Creada: ${new Date(t.createdAt).toLocaleDateString()}</p>
+                                ${t.expiresAt ? `<p class="text-orange-600"><i class="fas fa-hourglass-end mr-1"></i> Expira: ${new Date(t.expiresAt).toLocaleDateString()}</p>` : ''}
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="toggleTableStatus('${t.code}')" class="flex-1 px-3 py-1.5 text-xs border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                                    ${t.status === 'active' ? 'Desactivar' : 'Activar'}
+                                </button>
+                                <button onclick="downloadQR('${t.code}')" class="flex-1 px-3 py-1.5 text-xs bg-gray-100 rounded hover:bg-gray-200 text-center transition-colors">
+                                    <i class="fas fa-download mr-1"></i> Descargar QR
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                ${AppState.tables.length === 0 ? `<div class="text-center py-12 text-gray-500 bg-white rounded-lg border border-dashed border-gray-300"><i class="fas fa-chair text-4xl mb-3 opacity-30"></i><p>No hay mesas configuradas</p></div>` : ''}
+            `;
+        }
+
+        function getTableStatusColor(s) {
+            return { 
+                active: 'bg-green-100 text-green-800', 
+                occupied: 'bg-yellow-100 text-yellow-800', 
+                inactive: 'bg-gray-100 text-gray-800' 
+            }[s] || 'bg-gray-100 text-gray-800';
+        }
+
+        function openTableModal() {
+            const code = prompt('Código de mesa (dejar vacío para auto-generar):');
+            if (code === null) return;
+            const isTemp = confirm('¿Código temporal (24h)?');
+            
+            api('/tables', {
+                method: 'POST',
+                body: { code: code || undefined, is_temporary: isTemp, note: '' }
+            }).then(() => {
+                showToast('Mesa creada correctamente');
+                loadAdminData();
+            }).catch(err => showToast(err.message, 'error'));
+        }
+
+        async function generateBatchTables() {
+            const count = prompt('¿Cuántas mesas deseas generar?', '5');
+            if (!count || isNaN(count) || count < 1) return;
+            
+            try {
+                for (let i = 0; i < parseInt(count); i++) {
+                    await api('/tables', { method: 'POST', body: {} });
+                }
+                showToast(`${count} mesas generadas correctamente`);
+                loadAdminData();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function showQRCode(code) {
+            const t = AppState.tables.find(x => x.code === code);
+            if (!t) return;
+            
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl">
+                    <h3 class="text-xl font-bold mb-2">Mesa ${code}</h3>
+                    <div id="qr-display" class="flex justify-center mb-4 p-4 bg-white"></div>
+                    <div class="bg-gray-50 p-3 rounded-lg mb-4 text-left overflow-hidden">
+                        <p class="text-xs text-gray-600 font-mono break-all">${t.qrPayload || t.code}</p>
+                    </div>
+                    <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Cerrar</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            setTimeout(() => {
+                new QRCode(document.getElementById('qr-display'), {
+                    text: t.qrPayload || `${window.location.origin}/?table=${t.code}`,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            }, 100);
+        }
+
+        function downloadQR(code) {
+            const t = AppState.tables.find(x => x.code === code);
+            if (!t || !t.qrPath) return;
+            
+            // Crear un enlace temporal para descargar
+            const link = document.createElement('a');
+            link.href = t.qrPath;
+            link.download = `mesa-${code}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast('Descargando QR...');
+        }
+
+        async function deleteTable(code) {
+            if (!confirm(`¿Eliminar la mesa ${code}?`)) return;
+            try {
+                await api(`/tables/${code}`, { method: 'DELETE' });
+                showToast('Mesa eliminada');
+                loadAdminData();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        async function toggleTableStatus(code) {
+            const t = AppState.tables.find(x => x.code === code);
+            try {
+                await api(`/tables/${code}/status`, {
+                    method: 'PATCH',
+                    body: { status: t.status === 'active' ? 'inactive' : 'active' }
+                });
+                showToast(`Mesa ${t.status === 'active' ? 'desactivada' : 'activada'}`);
+                loadAdminData();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        // ==================== ADMIN: ORDERS ====================
+        function renderOrdersAdmin() {
+            return `
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Pedidos en Tiempo Real</h3>
+                    <a href="/cocina" target="_blank" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>Abrir Panel Cocina
+                    </a>
+                </div>
+                
+                <div class="space-y-4">
+                    ${AppState.orders.length === 0 ? '<div class="text-center py-12 text-gray-500 bg-white rounded-lg border border-dashed border-gray-300">No hay pedidos registrados</div>' : AppState.orders.map(o => `
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="font-bold text-gray-900">Pedido #${o.id}</h4>
+                                        <span class="px-2 py-1 rounded-full text-xs font-medium ${getOrderStatusColor(o.status)}">${o.status}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1"><i class="fas fa-chair mr-1"></i> Mesa ${o.table_code} • <i class="fas fa-clock mr-1"></i> ${new Date(o.createdAt).toLocaleString()}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-lg">$${parseFloat(o.total).toFixed(2)}</p>
+                                    <p class="text-xs text-gray-500">${o.items.length} items</p>
+                                </div>
+                            </div>
+                            <div class="border-t border-gray-100 pt-3">
+                                <div class="space-y-1 text-sm text-gray-600 mb-3">
+                                    ${o.items.map(i => `<div class="flex justify-between"><span>${i.quantity}x ${i.product_name}</span><span>$${(i.price * i.quantity).toFixed(2)}</span></div>`).join('')}
+                                </div>
+                                ${o.status !== 'delivered' ? `
+                                    <button onclick="updateOrderStatus(${o.id}, '${getNextStatus(o.status)}')" class="px-3 py-1.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors">
+                                        Marcar como ${getNextStatusLabel(o.status)}
+                                    </button>
+                                ` : '<span class="text-xs text-gray-500"><i class="fas fa-check mr-1"></i>Entregado</span>'}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function getOrderStatusColor(s) {
+            return { 
+                pending: 'bg-yellow-100 text-yellow-800', 
+                preparing: 'bg-blue-100 text-blue-800', 
+                ready: 'bg-green-100 text-green-800', 
+                delivered: 'bg-gray-100 text-gray-800' 
+            }[s] || 'bg-gray-100 text-gray-800';
+        }
+
+        function getNextStatus(s) {
+            return { pending: 'preparing', preparing: 'ready', ready: 'delivered' }[s] || s;
+        }
+
+        function getNextStatusLabel(s) {
+            return { pending: 'En preparación', preparing: 'Listo', ready: 'Entregado' }[s] || s;
+        }
+
+        async function updateOrderStatus(id, status) {
+            try {
+                await api(`/orders/${id}/status`, { method: 'PATCH', body: { status } });
+                showToast(`Pedido actualizado a: ${translateStatus(status)}`);
+                loadAdminData();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        // ==================== ADMIN: LOGS ====================
+        function renderLogsAdmin() {
+            return `
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Logs de Auditoría</h3>
+                    <button onclick="exportLogs()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm transition-colors">
+                        <i class="fas fa-download mr-2"></i>Exportar CSV
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="px-4 py-3 font-medium text-gray-700">Fecha/Hora</th>
+                                <th class="px-4 py-3 font-medium text-gray-700">Usuario</th>
+                                <th class="px-4 py-3 font-medium text-gray-700">Acción</th>
+                                <th class="px-4 py-3 font-medium text-gray-700">Detalles</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            ${AppState.auditLogs.slice(0, 100).map(l => `
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 text-gray-600 whitespace-nowrap">${new Date(l.timestamp).toLocaleString()}</td>
+                                    <td class="px-4 py-3 font-medium">${l.user}</td>
+                                    <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs font-medium ${getLogColor(l.action)}">${l.action}</span></td>
+                                    <td class="px-4 py-3 text-gray-600">${l.details}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                ${AppState.auditLogs.length === 0 ? '<div class="text-center py-12 text-gray-500">No hay registros de auditoría</div>' : ''}
+            `;
+        }
+
+        function getLogColor(a) {
+            return { 
+                admin_access: 'bg-purple-100 text-purple-800', 
+                product_create: 'bg-green-100 text-green-800', 
+                product_update: 'bg-blue-100 text-blue-800', 
+                product_delete: 'bg-red-100 text-red-800', 
+                order_create: 'bg-yellow-100 text-yellow-800' 
+            }[a] || 'bg-gray-100 text-gray-800';
+        }
+
+        function exportLogs() {
+            const csv = 'data:text/csv;charset=utf-8,' + 
+                ['Fecha,Usuario,Accion,Detalles', 
+                 ...AppState.auditLogs.map(l => `${l.timestamp},${l.user},${l.action},"${l.details}"`)].join('\n');
+            const encoded = encodeURI(csv);
+            const link = document.createElement('a');
+            link.setAttribute('href', encoded);
+            link.setAttribute('download', `audit_logs_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            showToast('Logs exportados correctamente');
+        }
+
+        // ==================== IMPORT/EXPORT ====================
+        async function exportData() {
+            try {
+                const data = await api('/export');
+                downloadJSON(data, `restaurante-backup-${new Date().toISOString().split('T')[0]}.json`);
+                showToast('Datos exportados correctamente');
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        async function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                
+                await api('/import', { method: 'POST', body: data });
+                showToast('Datos importados correctamente');
+                loadAdminData();
+            } catch (err) {
+                showToast('Error importando: ' + err.message, 'error');
+            }
+            input.value = '';
+        }
+
+        function downloadJSON(data, filename) {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(url);
+            a.remove();
+        }
+
+        // ==================== UTILS ====================
+        function translateStatus(s) {
+            return { pending: 'Pendiente', preparing: 'En preparación', ready: 'Listo para servir', delivered: 'Entregado' }[s] || s;
+        }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = { success: 'bg-green-500', error: 'bg-red-500', warning: 'bg-yellow-500', info: 'bg-blue-500' };
+            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+            
+            toast.className = `${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-x-full`;
+            toast.innerHTML = `<i class="fas ${icons[type]}"></i><span class="font-medium">${msg}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
